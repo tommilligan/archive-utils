@@ -107,7 +107,7 @@ while IFS= read -r entry; do
   [[ "$entry" == */ ]] && continue # skip directory entries
   entries=$((entries + 1))
   case "${entry,,}" in
-  *.jpg | *.mp4) ;;
+  *.jpg | *.jpeg | *.mp4) ;;
   *)
     echo "  unexpected file type: $entry" >&2
     bad=1
@@ -349,7 +349,7 @@ for f in "${FILES[@]}"; do
   [[ ! -e "$out" ]] || die "duplicate output name (collision?): $name"
 
   case "${name,,}" in
-  *.jpg)
+  *.jpg | *.jpeg)
     log "Copying photo: $name"
     cp -p "$f" "$out"
     photos_done=$((photos_done + 1))
