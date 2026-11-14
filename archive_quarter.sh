@@ -34,13 +34,13 @@ DURATION_TOL=0.5 # max allowed difference (seconds) between input and output
 # a batch differs, the script lists them and asks whether to continue BEFORE
 # encoding anything, so you can review CRF/pixel format/etc. (non-interactive
 # runs stop unless ACCEPT_BASELINE_CHANGE=1). Update these values once reviewed.
-EXPECT_CODEC="hevc"
-EXPECT_DIMS="1920x1080" # orientation-agnostic (portrait == landscape)
-EXPECT_FPS_MIN=24       # frames/s. Pixel clips are variable-frame-rate, so "30 fps"
-EXPECT_FPS_MAX=30.5     # shows up as 28.9, 29.75, 29.97, 30, ...; 60/120/240 will flag
+EXPECT_CODEC="hevc|h264" # regex pattern
+EXPECT_DIMS="1920x1080"  # orientation-agnostic (portrait == landscape)
+EXPECT_FPS_MIN=24        # frames/s. Pixel clips are variable-frame-rate, so "30 fps"
+EXPECT_FPS_MAX=30.5      # shows up as 28.9, 29.75, 29.97, 30, ...; 60/120/240 will flag
 EXPECT_PIX_FMT="yuvj420p"
-EXPECT_TRANSFER="bt709"     # anything else (e.g. HLG/PQ HDR) needs a different recipe
-EXPECT_BITRATE_MIN=10000000 # bits/s; sample clip was ~19.6 Mbps
+EXPECT_TRANSFER="bt709"    # anything else (e.g. HLG/PQ HDR) needs a different recipe
+EXPECT_BITRATE_MIN=8000000 # bits/s; sample clip was ~19.6 Mbps
 EXPECT_BITRATE_MAX=30000000
 
 # TESTING ONLY: if non-empty, only this basename is processed (e.g.
@@ -186,7 +186,7 @@ baseline_deviations() {
     if ((PROBE_W >= PROBE_H)); then dims="${PROBE_W}x${PROBE_H}"; else dims="${PROBE_H}x${PROBE_W}"; fi
   fi
 
-  [[ "$PROBE_CODEC" == "$EXPECT_CODEC" ]] || echo "codec $PROBE_CODEC (expected $EXPECT_CODEC)"
+  [[ "$PROBE_CODEC" =~ ^($EXPECT_CODEC)$ ]] || echo "codec $PROBE_CODEC (expected $EXPECT_CODEC)"
   [[ "$dims" == "$EXPECT_DIMS" ]] || echo "resolution $dims (expected $EXPECT_DIMS)"
   local fps
   fps="$(fps_value "$PROBE_FPS")"
