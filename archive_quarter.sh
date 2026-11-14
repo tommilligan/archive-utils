@@ -309,10 +309,11 @@ report_progress() {
   local elapsed=$((SECONDS - LOOP_START)) est_total pct mb_done mb_total
   est_total="$(awk -v e="$elapsed" -v d="$bytes_done" -v t="$TOTAL_VIDEO_BYTES" \
     'BEGIN{x=int(e*t/d+0.5); if(x<e)x=e; print x}')"
+  est_remaining=$((est_total - elapsed))
   pct=$((bytes_done * 100 / TOTAL_VIDEO_BYTES))
   mb_done="$(awk -v b="$bytes_done" 'BEGIN{printf "%.1f", b/1048576}')"
   mb_total="$(awk -v b="$TOTAL_VIDEO_BYTES" 'BEGIN{printf "%.0f", b/1048576}')"
-  log "Processed $videos_done/$TOTAL_VIDEOS videos, ${mb_done}/${mb_total}MB, estimated $(fmt_dur "$elapsed")/$(fmt_dur "$est_total") (${pct}%)"
+  log "Processed $videos_done/$TOTAL_VIDEOS videos, ${mb_done}/${mb_total}MB, ~$(fmt_dur "$est_remaining") remaining (${pct}%)"
 }
 
 # Compress + verify one video; records failures in FAILED and returns non-zero.
